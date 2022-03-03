@@ -83,7 +83,7 @@ class _AddAmountPageState extends State<AddAmountPage> {
       // Navigator.pushNamed(context, '/area');
       Navigator.pushNamed(
         context,
-        '/amount/add',
+        '/area',
         arguments: {
           'userId': userId
         }

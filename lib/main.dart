@@ -15,6 +15,7 @@ import 'package:receipts/promocode.dart';
 import 'package:receipts/register.dart';
 import 'package:receipts/transfer.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_email_sender/flutter_email_sender.dart';
 
 import 'add_amount.dart';
 import 'models.dart';
@@ -290,18 +291,28 @@ class _MyHomePageState extends State<MyHomePage> {
                   Navigator.pushNamed(context, '/contacts');
                 }
               ),
-              Row(
-                children: [
-                  Icon(
-                    Icons.help
-                  ),
-                  Text(
-                    'Техподдержка',
-                    style: TextStyle(
-                      color: Color.fromARGB(255, 0, 0, 255)
+              GestureDetector(
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.help
                     ),
-                  )
-                ]
+                    Text(
+                      'Техподдержка',
+                      style: TextStyle(
+                        color: Color.fromARGB(255, 0, 0, 255)
+                      ),
+                    )
+                  ]
+                ),
+                onTap: () async {
+                  final Email email = Email(
+                    body: '<br>---Пожалуйста, не удаляйте эту информацию---<br><br>Операционная система: 11<br>Сервисы Google-Play: 220221037<br>Устройство: samsung SM-A207F<br>Приложение: версия 1.28.1GMS (1139)<br>Тип соединения: WI-FI connection<br>Язык: русский<br>Страна: Россия<br>Часовой пояс: Москва, стандартное время<br>Геолокация: Выключено<br>Push сообщения: Включено<br>Идентификатор Push FB: dkZhRL2zlRI:APA91bEOM39rEDCqf4oOh_vbf95d14vkL4WkQQGbbMqMCJE__a6QG4J3Ebri-Jh2naqUtqS5aY-vJ3PJQ202k1o3SHcdiI9dloHpO-ELWhoprg6oGtRx8qU6fDuYwCFG1N8OJBJuwGM3',
+                    subject: 'Обратная связь',
+                    recipients: ['LKK_INFO@mosenergosbyt.ru']
+                  );
+                  await FlutterEmailSender.send(email);
+                }
               )
             ]
           ),

@@ -16,30 +16,26 @@ class ProfilePasswordPage extends StatefulWidget {
 class _ProfilePasswordPageState extends State<ProfilePasswordPage> {
 
   late DatabaseHandler handler;
-  String login = '';
-  String phone = '';
+  int userId = 0;
+  String currentPassword = '';
   String password = '';
   String confirmPassword = '';
-  String name = '';
-  bool email = false;
+  late User currentUser;
 
-  addUser(context) {
+  updatePassword(context) {
+    String currentUserPassword = currentUser.password;
+    bool isCurrentPasswordMatches = currentUserPassword == currentPassword;
     bool isPasswordsMatches = password == confirmPassword;
-    int loginFieldLength = login.length;
-    bool isLoginFieldFilled = loginFieldLength >= 1;
-    int phoneFieldLength = phone.length;
-    bool isPhoneFieldFilled = phoneFieldLength >= 1;
+    int currentPasswordFieldLength = currentPassword.length;
+    bool isCurrentPasswordFieldFilled = currentPasswordFieldLength >= 1;
     int passwordFieldLength = password.length;
     bool isPasswordFieldFilled = passwordFieldLength >= 1;
     int confirmPasswordFieldLength = confirmPassword.length;
     bool isConfirmPasswordFieldFilled = confirmPasswordFieldLength >= 1;
-    int nameFieldLength = name.length;
-    bool isNameFieldFilled = nameFieldLength >= 1;
-    bool isFieldsFilled = isLoginFieldFilled || isPhoneFieldFilled || isPasswordFieldFilled || isConfirmPasswordFieldFilled || isNameFieldFilled;
-    bool isCanLogin = isPasswordsMatches && isFieldsFilled;
-    if (isCanLogin) {
-      int rawEmail = email ? 1 : 0;
-      handler.addNewUsers(login, password, '', phone, name, rawEmail, '', '', '', '', '');
+    bool isFieldsFilled = isCurrentPasswordFieldFilled || isPasswordFieldFilled || isConfirmPasswordFieldFilled;
+    bool isCanUpdate = isCurrentPasswordMatches && isPasswordsMatches && isFieldsFilled;
+    if (isCanUpdate) {
+      handler.updateUserPassword(userId, password);
       handler.retrieveUsers().then((value) {
         User currentUser = value.last;
         int userId = currentUser.id!;
@@ -54,52 +50,48 @@ class _ProfilePasswordPageState extends State<ProfilePasswordPage> {
       });
     } else {
       String msg = '';
-      bool isLoginFieldNotFilled = !isLoginFieldFilled;
-      if (isLoginFieldNotFilled) {
-        msg += 'Поле \"E-mail\" не заполнено\n';
-      }
-      bool isPhoneFieldNotFilled = !isPhoneFieldFilled;
-      if (isPhoneFieldNotFilled) {
-        msg += 'Поле \"Номер телефона\" не заполнено\n';
+      bool isCurrentPasswordFieldNotFilled = !isCurrentPasswordFieldFilled;
+      if (isCurrentPasswordFieldNotFilled) {
+        msg += 'Поле \"Текущий пароль\" не заполнено\n';
       }
       bool isPasswordFieldNotFilled = !isPasswordFieldFilled;
       if (isPasswordFieldNotFilled) {
-        msg += 'Поле \"Придумайте пароль\" не заполнено\n';
+        msg += 'Поле \"Новый пароль\" не заполнено\n';
       }
       bool isConfirmPasswordFieldNotFilled = !isConfirmPasswordFieldFilled;
       if (isConfirmPasswordFieldNotFilled) {
         msg += 'Поле \"Повторите пароль\" не заполнено\n';
       }
-      bool isNameFieldNotFilled = !isNameFieldFilled;
-      if (isNameFieldNotFilled) {
-        msg += 'Поле \"Имя пользователя\" не заполнено\n';
+      bool isCurrentPasswordNotMatches = !isCurrentPasswordMatches;
+      if (isCurrentPasswordNotMatches) {
+        msg += 'Поле \"Текущий пароль\" не совпадает\n';
       }
       bool isPasswordsNotMatches = !isPasswordsMatches;
       if (isPasswordsNotMatches) {
-        msg += 'Поля \"Придумайте пароль\" и \"Повторите пароль\" не совпадают';
+        msg += 'Поля \"Новый пароль\" и \"Повторите пароль\" не совпадают';
       }
       showDialog<String>(
-          context: context,
-          builder: (BuildContext context) => AlertDialog(
-              title: const Text('Сообщение'),
-              content: Container(
-                  child: Column(
-                      children: [
-                        Text(
-                            msg
-                        )
-                      ]
-                  )
-              ),
-              actions: <Widget>[
-                TextButton(
-                    onPressed: () {
-                      return Navigator.pop(context, 'OK');
-                    },
-                    child: const Text('ОК')
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          title: const Text('Сообщение'),
+          content: Container(
+            child: Column(
+              children: [
+                Text(
+                  msg
                 )
               ]
-          )
+            )
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                return Navigator.pop(context, 'OK');
+              },
+              child: const Text('ОК')
+            )
+          ]
+        )
       );
     }
   }
@@ -110,13 +102,31 @@ class _ProfilePasswordPageState extends State<ProfilePasswordPage> {
     handler = DatabaseHandler();
     handler.initializeDB().whenComplete(() async {
       setState(() {
-
+        handler.retrieveUsers().then((value) {
+          for (User user in value) {
+            int currentUserId = user.id!;
+            bool isMyUser = currentUserId == userId;
+            if (isMyUser) {
+              currentUser = user;
+              break;
+            }
+          }
+        });
       });
     });
   }
 
   @override
   Widget build(BuildContext context) {
+
+    setState(() {
+      final arguments = ModalRoute.of(context)!.settings.arguments as Map;
+      if (arguments != null) {
+        print(arguments['userId']);
+        userId = arguments['userId'];
+      }
+    });
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -126,130 +136,81 @@ class _ProfilePasswordPageState extends State<ProfilePasswordPage> {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          TextField(
-              onChanged: (value) {
-                setState(() {
-                  login = value;
-                });
-              },
-              decoration: new InputDecoration.collapsed(
-                  hintText: 'E-mail',
-                  border: OutlineInputBorder(
-                      borderSide: BorderSide(
-                          width: 1.0
-                      )
-                  )
-              )
-          ),
-          TextField(
-              onChanged: (value) {
-                setState(() {
-                  phone = value;
-                });
-              },
-              decoration: new InputDecoration.collapsed(
-                  hintText: 'Мобильный телефон',
-                  border: OutlineInputBorder(
-                      borderSide: BorderSide(
-                          width: 1.0
-                      )
-                  )
-              )
-          ),
-          TextField(
-              onChanged: (value) {
-                setState(() {
-                  password = value;
-                });
-              },
-              decoration: new InputDecoration.collapsed(
-                  hintText: 'Придумайте пароль',
-                  border: OutlineInputBorder(
-                      borderSide: BorderSide(
-                          width: 1.0
-                      )
-                  )
-              ),
-              obscureText: true
-          ),
-          TextField(
-              onChanged: (value) {
-                setState(() {
-                  confirmPassword = value;
-                });
-              },
-              decoration: new InputDecoration.collapsed(
-                  hintText: 'Повторите пароль',
-                  border: OutlineInputBorder(
-                      borderSide: BorderSide(
-                          width: 1.0
-                      )
-                  )
-              ),
-              obscureText: true
-          ),
-          TextField(
-              onChanged: (value) {
-                setState(() {
-                  name = value;
-                });
-              },
-              decoration: new InputDecoration.collapsed(
-                  hintText: 'Имя пользователя',
-                  border: OutlineInputBorder(
-                      borderSide: BorderSide(
-                          width: 1.0
-                      )
-                  )
-              )
-          ),
-          Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Column(
-                    children: [
-                      Text(
-                          'Даю согласие на получение рвссылок\nрекламно-информационного характера'
-                      ),
-                      Text(
-                          'Без согласия на рекламу Вы упускаете\nнаши выгодные предложения'
-                      )
-                    ]
-                ),
-                Switch(
-                    value: email,
-                    onChanged: (value) {
-                      setState(() {
-                        email = value;
-                      });
-                    }
-                )
-              ]
-          ),
           Text(
-              'Нажимая кнопку \"Далее\" Вы принимаете\nПользовательское соглашение и даете\nна обработку персональных данных'
+            'После изменения пароля произойдет выход\nиз аккаунта на всех устройствах, сайтах и\nприложениях, где вошли с текущим паролем.'
+          ),
+          TextField(
+            onChanged: (value) {
+              setState(() {
+                currentPassword = value;
+              });
+            },
+            obscureText: true,
+            decoration: new InputDecoration.collapsed(
+              hintText: 'Текущий пароль',
+              border: OutlineInputBorder(
+                borderSide: BorderSide(
+                  width: 1.0
+                )
+              )
+            )
+          ),
+          TextField(
+            onChanged: (value) {
+              setState(() {
+                password = value;
+              });
+            },
+            decoration: new InputDecoration.collapsed(
+              hintText: 'Новый пароль',
+              border: OutlineInputBorder(
+                borderSide: BorderSide(
+                  width: 1.0
+                )
+              )
+            ),
+            obscureText: true
+          ),
+          TextField(
+            onChanged: (value) {
+              setState(() {
+                confirmPassword = value;
+              });
+            },
+            decoration: new InputDecoration.collapsed(
+              hintText: 'Повторите пароль',
+              border: OutlineInputBorder(
+                borderSide: BorderSide(
+                  width: 1.0
+                )
+              )
+            ),
+            obscureText: true
           ),
           TextButton(
-              child: Text(
-                  'Далее'
+            child: Text(
+              'Изменить пароль'
+            ),
+            onPressed: () {
+              updatePassword(context);
+            },
+            style: ButtonStyle(
+              foregroundColor: MaterialStateProperty.all<Color>(
+                Colors.white
               ),
-              onPressed: () {
-                addUser(context);
-              },
-              style: ButtonStyle(
-                  foregroundColor: MaterialStateProperty.all<Color>(
-                      Colors.orange
-                  ),
-                  fixedSize: MaterialStateProperty.all<Size>(
-                      Size(
-                          45.0,
-                          45.0
-                      )
-                  )
+              backgroundColor: MaterialStateProperty.all<Color>(
+                Colors.orange
+              ),
+              fixedSize: MaterialStateProperty.all<Size>(
+                Size(
+                  MediaQuery.of(context).size.width,
+                  45.0
+                )
               )
+            )
           )
-        ],
-      ),
+        ]
+      )
     );
   }
 }

@@ -124,132 +124,48 @@ class _ProfileAccountsPageState extends State<ProfileAccountsPage> {
         )
       ),
       body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          TextField(
-              onChanged: (value) {
-                setState(() {
-                  login = value;
-                });
-              },
-              decoration: new InputDecoration.collapsed(
-                  hintText: 'E-mail',
-                  border: OutlineInputBorder(
-                      borderSide: BorderSide(
-                          width: 1.0
-                      )
-                  )
-              )
-          ),
-          TextField(
-              onChanged: (value) {
-                setState(() {
-                  phone = value;
-                });
-              },
-              decoration: new InputDecoration.collapsed(
-                  hintText: 'Мобильный телефон',
-                  border: OutlineInputBorder(
-                      borderSide: BorderSide(
-                          width: 1.0
-                      )
-                  )
-              )
-          ),
-          TextField(
-              onChanged: (value) {
-                setState(() {
-                  password = value;
-                });
-              },
-              decoration: new InputDecoration.collapsed(
-                  hintText: 'Придумайте пароль',
-                  border: OutlineInputBorder(
-                      borderSide: BorderSide(
-                          width: 1.0
-                      )
-                  )
-              ),
-              obscureText: true
-          ),
-          TextField(
-              onChanged: (value) {
-                setState(() {
-                  confirmPassword = value;
-                });
-              },
-              decoration: new InputDecoration.collapsed(
-                  hintText: 'Повторите пароль',
-                  border: OutlineInputBorder(
-                      borderSide: BorderSide(
-                          width: 1.0
-                      )
-                  )
-              ),
-              obscureText: true
-          ),
-          TextField(
-              onChanged: (value) {
-                setState(() {
-                  name = value;
-                });
-              },
-              decoration: new InputDecoration.collapsed(
-                  hintText: 'Имя пользователя',
-                  border: OutlineInputBorder(
-                      borderSide: BorderSide(
-                          width: 1.0
-                      )
-                  )
-              )
-          ),
           Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Column(
+                Container(
+                  child: Row(
                     children: [
-                      Text(
-                          'Даю согласие на получение рвссылок\nрекламно-информационного характера'
+                      Icon(
+                        Icons.chat_bubble_outline,
+                        color: Colors.red
                       ),
-                      Text(
-                          'Без согласия на рекламу Вы упускаете\nнаши выгодные предложения'
+                      Container(
+                        margin: EdgeInsets.only(
+                          left: 15
+                        ),
+                        child: Text(
+                          'Официальный сайт мэра\nМосквы mos.ru'
+                        )
                       )
                     ]
+                  )
                 ),
-                Switch(
-                    value: email,
-                    onChanged: (value) {
-                      setState(() {
-                        email = value;
-                      });
-                    }
+                TextButton(
+                  style: ButtonStyle(
+                    foregroundColor: MaterialStateProperty.all<Color>(
+                      Color.fromARGB(255, 255, 255, 255)
+                    ),
+                    backgroundColor: MaterialStateProperty.all<Color>(
+                      Colors.orange
+                    ),
+                  ),
+                  child: Text(
+                    'Связать'
+                  ),
+                  onPressed: () {
+
+                  }
                 )
               ]
-          ),
-          Text(
-              'Нажимая кнопку \"Далее\" Вы принимаете\nПользовательское соглашение и даете\nна обработку персональных данных'
-          ),
-          TextButton(
-              child: Text(
-                  'Далее'
-              ),
-              onPressed: () {
-                addUser(context);
-              },
-              style: ButtonStyle(
-                  foregroundColor: MaterialStateProperty.all<Color>(
-                      Colors.orange
-                  ),
-                  fixedSize: MaterialStateProperty.all<Size>(
-                      Size(
-                          45.0,
-                          45.0
-                      )
-                  )
-              )
           )
-        ],
-      ),
+        ]
+      )
     );
   }
 }

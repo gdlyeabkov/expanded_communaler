@@ -124,132 +124,95 @@ class _ProfileContactsPageState extends State<ProfileContactsPage> {
         )
       ),
       body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          TextField(
-              onChanged: (value) {
-                setState(() {
-                  login = value;
-                });
-              },
-              decoration: new InputDecoration.collapsed(
-                  hintText: 'E-mail',
-                  border: OutlineInputBorder(
-                      borderSide: BorderSide(
-                          width: 1.0
-                      )
-                  )
-              )
-          ),
-          TextField(
-              onChanged: (value) {
-                setState(() {
-                  phone = value;
-                });
-              },
-              decoration: new InputDecoration.collapsed(
-                  hintText: 'Мобильный телефон',
-                  border: OutlineInputBorder(
-                      borderSide: BorderSide(
-                          width: 1.0
-                      )
-                  )
-              )
-          ),
-          TextField(
-              onChanged: (value) {
-                setState(() {
-                  password = value;
-                });
-              },
-              decoration: new InputDecoration.collapsed(
-                  hintText: 'Придумайте пароль',
-                  border: OutlineInputBorder(
-                      borderSide: BorderSide(
-                          width: 1.0
-                      )
-                  )
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                width: 350,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'E-mail'
+                    ),
+                    Text(
+                      'xxx888xxx888xxx888xxx@mail.ru'
+                    )
+                  ]
+                )
               ),
-              obscureText: true
-          ),
-          TextField(
-              onChanged: (value) {
-                setState(() {
-                  confirmPassword = value;
-                });
-              },
-              decoration: new InputDecoration.collapsed(
-                  hintText: 'Повторите пароль',
-                  border: OutlineInputBorder(
-                      borderSide: BorderSide(
-                          width: 1.0
-                      )
-                  )
-              ),
-              obscureText: true
-          ),
-          TextField(
-              onChanged: (value) {
-                setState(() {
-                  name = value;
-                });
-              },
-              decoration: new InputDecoration.collapsed(
-                  hintText: 'Имя пользователя',
-                  border: OutlineInputBorder(
-                      borderSide: BorderSide(
-                          width: 1.0
-                      )
-                  )
+              Icon(
+                Icons.chevron_right
               )
+            ]
+          ),
+          Divider(
+            thickness: 1.0
           ),
           Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Column(
-                    children: [
-                      Text(
-                          'Даю согласие на получение рвссылок\nрекламно-информационного характера'
-                      ),
-                      Text(
-                          'Без согласия на рекламу Вы упускаете\nнаши выгодные предложения'
-                      )
-                    ]
-                ),
-                Switch(
-                    value: email,
-                    onChanged: (value) {
-                      setState(() {
-                        email = value;
-                      });
-                    }
-                )
-              ]
-          ),
-          Text(
-              'Нажимая кнопку \"Далее\" Вы принимаете\nПользовательское соглашение и даете\nна обработку персональных данных'
-          ),
-          TextButton(
-              child: Text(
-                  'Далее'
+            children: [
+              Icon(
+                Icons.check
               ),
-              onPressed: () {
-                addUser(context);
-              },
-              style: ButtonStyle(
-                  foregroundColor: MaterialStateProperty.all<Color>(
-                      Colors.orange
-                  ),
-                  fixedSize: MaterialStateProperty.all<Size>(
-                      Size(
-                          45.0,
-                          45.0
-                      )
-                  )
+              Container(
+                margin: EdgeInsets.only(
+                  left: 15
+                ),
+                child: Text(
+                  'E-mail подтвержден'
+                )
               )
+            ],
+          ),
+          Divider(
+            thickness: 1.0
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                width: 250,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Телефон'
+                    ),
+                    Text(
+                      '89999999999'
+                    )
+                  ]
+                )
+              ),
+              Icon(
+                Icons.chevron_right
+              )
+            ]
+          ),
+          Divider(
+            thickness: 1.0
+          ),
+          Row(
+            children: [
+              Icon(
+                Icons.check
+              ),
+              Container(
+                margin: EdgeInsets.only(
+                  left: 15
+                ),
+                child: Text(
+                  'Телефон подтвержден'
+                )
+              )
+            ]
+          ),
+          Divider(
+            thickness: 1.0
           )
-        ],
-      ),
+        ]
+      )
     );
   }
 }

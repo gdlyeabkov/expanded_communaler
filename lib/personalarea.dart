@@ -39,6 +39,11 @@ class _PersonalAreaPageState extends State<PersonalAreaPage> {
     cost: 0,
     datetime: '',
   );
+  List<Widget> messages = [
+
+  ];
+  String message = '';
+  late TextField messageInputField;
 
   addAmount(Amount record, context) {
     int amountId = record.id!;
@@ -87,13 +92,51 @@ class _PersonalAreaPageState extends State<PersonalAreaPage> {
     }
   }
 
+  sendMessage() {
+    Widget msg = Container(
+      padding: EdgeInsets.all(
+        15
+      ),
+      margin: EdgeInsets.all(
+        15
+      ),
+      decoration: BoxDecoration(
+        color: Colors.white
+      ),
+      width: 300,
+      height: 75,
+      child: Text(
+        message
+      )
+    );
+    setState(() {
+      messages.add(msg);
+      // message = '';
+    });
+  }
+
   @override
   initState() {
     super.initState();
     handler = DatabaseHandler();
     handler.initializeDB().whenComplete(() async {
       setState(() {
+        messageInputField = TextField(
 
+          onChanged: (value) {
+            setState(() {
+              message = value;
+            });
+          },
+          decoration: new InputDecoration.collapsed(
+              hintText: 'Сообщение',
+            border: OutlineInputBorder(
+              borderSide: BorderSide(
+                  width: 1.0
+              )
+            )
+          )
+        );
       });
     });
   }
@@ -179,240 +222,251 @@ class _PersonalAreaPageState extends State<PersonalAreaPage> {
             children: [
               Column(
                 children: <Widget>[
-                  Container(
-                    child:  Row(
-                      children: [
-                        GestureDetector(
-                          onTap: () {
-                            // Navigator.pushNamed(context, '/amount/add');
-                            Navigator.pushNamed(
-                              context,
-                              '/amount/add',
-                              arguments: {
-                                'userId': userId
-                              }
-                            );
-                          },
-                          child: Container(
-                            height: 25,
-                            margin: EdgeInsets.symmetric(
-                              horizontal: 10
-                            ),
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 25,
-                              vertical: 3
-                            ),
-                            decoration: BoxDecoration(
-                              color: Color.fromARGB(255, 185, 185, 185),
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(10.0),
-                                topRight: Radius.circular(10.0)
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Container(
+                      child:  Row(
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              // Navigator.pushNamed(context, '/amount/add');
+                              Navigator.pushNamed(
+                                context,
+                                '/amount/add',
+                                arguments: {
+                                  'userId': userId
+                                }
+                              );
+                            },
+                            child: Container(
+                              height: 25,
+                              margin: EdgeInsets.symmetric(
+                                horizontal: 10
+                              ),
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 25,
+                                vertical: 3
+                              ),
+                              decoration: BoxDecoration(
+                                color: Color.fromARGB(255, 185, 185, 185),
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(10.0),
+                                  topRight: Radius.circular(10.0)
+                                )
+                              ),
+                              child: Icon(
+                                Icons.add
                               )
-                            ),
-                            child: Icon(
-                              Icons.add
                             )
-                          )
-                        ),
-                        FutureBuilder(
-                          future: handler.retrieveAmounts(),
-                          builder: (BuildContext context, AsyncSnapshot<List<Amount>> snapshot) {
-                            int snapshotsCount = 0;
-                            if (snapshot.data != null) {
-                              snapshotsCount = snapshot.data!.length;
-                              amounts = [];
-                              for (int snapshotIndex = 0; snapshotIndex < snapshotsCount; snapshotIndex++) {
-                                addAmount(snapshot.data!.elementAt(snapshotIndex), context);
+                          ),
+                          FutureBuilder(
+                            future: handler.retrieveAmounts(),
+                            builder: (BuildContext context, AsyncSnapshot<List<Amount>> snapshot) {
+                              int snapshotsCount = 0;
+                              if (snapshot.data != null) {
+                                snapshotsCount = snapshot.data!.length;
+                                amounts = [];
+                                for (int snapshotIndex = 0; snapshotIndex < snapshotsCount; snapshotIndex++) {
+                                  addAmount(snapshot.data!.elementAt(snapshotIndex), context);
+                                }
                               }
-                            }
-                            if (snapshot.hasData) {
-                              return Column(
-                                children: [
-                                  Container(
-                                    height: 250,
-                                    child: SingleChildScrollView(
-                                      scrollDirection: Axis.horizontal,
-                                      child: Row(
-                                        children: amounts
+                              if (snapshot.hasData) {
+                                return Column(
+                                  children: [
+                                    Container(
+                                      height: 250,
+                                      child: SingleChildScrollView(
+                                        scrollDirection: Axis.horizontal,
+                                        child: Row(
+                                          children: amounts
+                                        )
                                       )
                                     )
-                                  )
-                                ]
-                              );
-                            } else {
+                                  ]
+                                );
+                              } else {
+                                return Row(
+
+                                );
+                              }
                               return Row(
 
                               );
-                            }
-                            return Row(
-
-                            );
-                          },
-                        )
-                      ]
-                    ),
-                    margin: EdgeInsets.all(35)
-                  ),
-                  (
-                    amounts.length <= 0 ?
-                      Text(
-                        'Вы не прикрепили еще ни одного счета'
-                      )
-                    :
-                      Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                'Адресс проживания'
-                              ),
-                              Icon(
-                                Icons.info
-                              )
-                            ]
-                          ),
-                          Text(
-                            currentAmount.cost < 0 ?
-                              'Сумма к оплате'
-                            :
-                              'Переплата'
-                          ),
-                          Text(
-                            '1000 Р',
-                            style: TextStyle(
-                              fontSize: 36,
-                              color: (
-                                currentAmount.cost >= 0 ?
-                                  Color.fromARGB(255, 0, 150, 0)
-                                :
-                                  Color.fromARGB(255, 255, 0, 0)
-                              )
-                            )
-                          ),
-                          TextButton(
-                            child: Text(
-                              'Еще'
-                            ),
-                            onPressed: () {
-
                             },
-                            style: ButtonStyle(
-                              backgroundColor: MaterialStateProperty.all<Color>(
-                                Color.fromARGB(255, 225, 225, 225)
-                              ),
-                              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                                RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(18.0)
-                                )
-                              ),
-                              fixedSize: MaterialStateProperty.all<Size>(
-                                Size(
-                                  125.0,
-                                  45.0
-                                )
-                              ),
-                              foregroundColor: MaterialStateProperty.all<Color>(
-                                Color.fromARGB(255, 0, 0, 0)
-                              )
-                            )
-                          ),
-                          TextButton(
-                            style: ButtonStyle(
-                              foregroundColor: MaterialStateProperty.all<Color>(
-                                Colors.white
-                              ),
-                              backgroundColor: MaterialStateProperty.all<Color>(
-                                Colors.orange
-                              ),
-                              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                                RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(18.0)
-                                )
-                              ),
-                              fixedSize: MaterialStateProperty.all<Size>(
-                                Size(
-                                  275.0,
-                                  45.0
-                                )
-                              )
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
+                          )
+                        ]
+                      ),
+                      margin: EdgeInsets.all(35)
+                    )
+                  ),
+                    (
+                      amounts.length <= 0 ?
+                        Text(
+                          'Вы не прикрепили еще ни одного счета'
+                        )
+                      :
+                        Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Icon(
-                                  Icons.warning
-                                ),
                                 Text(
-                                  'Важные уведомления'
+                                  'Адресс проживания'
+                                ),
+                                Icon(
+                                  Icons.info
                                 )
                               ]
                             ),
-                            onPressed: () {
+                            Text(
+                              currentAmount.cost < 0 ?
+                                'Сумма к оплате'
+                              :
+                                'Переплата'
+                            ),
+                            Text(
+                              '${currentAmount.cost} Р',
+                              style: TextStyle(
+                                fontSize: 36,
+                                color: (
+                                  currentAmount.cost >= 0 ?
+                                    Color.fromARGB(255, 0, 150, 0)
+                                  :
+                                    Color.fromARGB(255, 255, 0, 0)
+                                )
+                              )
+                            ),
+                            TextButton(
+                              child: Text(
+                                'Еще'
+                              ),
+                              onPressed: () {
 
-                            }
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              GestureDetector(
-                                child: Column(
-                                  children: [
-                                    Container(
-                                      child: Icon(
-                                        Icons.credit_card_rounded,
-                                        size: 48
-                                      ),
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle
-                                      )
-                                    ),
-                                    Text(
-                                      'Оплатить\nбез',
-                                      textAlign: TextAlign.center,
-                                    )
-                                  ]
+                              },
+                              style: ButtonStyle(
+                                backgroundColor: MaterialStateProperty.all<Color>(
+                                  Color.fromARGB(255, 225, 225, 225)
                                 ),
-                                onTap: () {
-                                  // Navigator.pushNamed(context, '/payment');
-                                  // int currentAmountId = currentAmount.id!;
-                                  Navigator.pushNamed(
-                                    context,
-                                    '/payment',
-                                    arguments: {
-                                      'userId': userId,
-                                      'amountId': currentAmount.id
-                                    }
-                                  );
-                                },
+                                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                  RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(18.0)
+                                  )
+                                ),
+                                fixedSize: MaterialStateProperty.all<Size>(
+                                  Size(
+                                    125.0,
+                                    45.0
+                                  )
+                                ),
+                                foregroundColor: MaterialStateProperty.all<Color>(
+                                  Color.fromARGB(255, 0, 0, 0)
+                                )
+                              )
+                            ),
+                            TextButton(
+                              style: ButtonStyle(
+                                foregroundColor: MaterialStateProperty.all<Color>(
+                                  Colors.white
+                                ),
+                                backgroundColor: MaterialStateProperty.all<Color>(
+                                  Colors.orange
+                                ),
+                                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                  RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(18.0)
+                                  )
+                                ),
+                                fixedSize: MaterialStateProperty.all<Size>(
+                                  Size(
+                                    275.0,
+                                    45.0
+                                  )
+                                )
                               ),
-                              VerticalDivider(
-                                thickness: 1.0,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.warning
+                                  ),
+                                  Text(
+                                    'Важные уведомления'
+                                  )
+                                ]
                               ),
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.pushNamed(context, '/transfer');
-                                },
-                                child: Column(
-                                  children: [
-                                    Container(
+                              onPressed: () {
+
+                              }
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                GestureDetector(
+                                  child: Column(
+                                    children: [
+                                      Container(
+                                        child: Icon(
+                                          Icons.credit_card_rounded,
+                                          size: 48
+                                        ),
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle
+                                        )
+                                      ),
+                                      Text(
+                                        'Оплатить\nбез',
+                                        textAlign: TextAlign.center,
+                                      )
+                                    ]
+                                  ),
+                                  onTap: () {
+                                    // Navigator.pushNamed(context, '/payment');
+                                    // int currentAmountId = currentAmount.id!;
+                                    Navigator.pushNamed(
+                                      context,
+                                      '/payment',
+                                      arguments: {
+                                        'userId': userId,
+                                        'amountId': currentAmount.id
+                                      }
+                                    );
+                                  },
+                                ),
+                                VerticalDivider(
+                                  thickness: 1.0,
+                                ),
+                                GestureDetector(
+                                  onTap: () {
+                                    // Navigator.pushNamed(context, '/transfer');
+                                    Navigator.pushNamed(
+                                      context,
+                                      '/transfer',
+                                      arguments: {
+                                        'userId': userId,
+                                        'amountId': currentAmount.id
+                                      }
+                                    );
+                                  },
+                                  child: Column(
+                                    children: [
+                                      Container(
                                         child: Icon(
                                           Icons.inbox,
                                           size: 48
                                         ),
                                         decoration: BoxDecoration(
-                                            shape: BoxShape.circle
+                                          shape: BoxShape.circle
                                         )
-                                    ),
-                                    Text(
-                                      'Передать\nпоказания',
-                                      textAlign: TextAlign.center,
-                                    )
-                                  ]
+                                      ),
+                                      Text(
+                                        'Передать\nпоказания',
+                                        textAlign: TextAlign.center,
+                                      )
+                                    ]
+                                  )
                                 )
-                              )
-                            ],
-                          )
+                              ],
+                            )
                         ]
                       )
                   )
@@ -494,6 +548,7 @@ class _PersonalAreaPageState extends State<PersonalAreaPage> {
                 children: [
                   SingleChildScrollView(
                     child: Container(
+                      height: MediaQuery.of(context).size.height - 350,
                       child: Column(
                         children: [
                           Container(
@@ -511,35 +566,20 @@ class _PersonalAreaPageState extends State<PersonalAreaPage> {
                             child: Text(
                               'Здраствуйте! Введите свое обращение,\nпожалуйста.'
                             )
-                          )
+                          ),
+                          ...messages
                         ]
                       )
                     )
                   ),
-                  Row(
-                    children: [
-                      TextField(
-                        onChanged: (value) {
-
-                        },
-                        decoration: new InputDecoration.collapsed(
-                          hintText: 'Сообщение',
-                          border: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              width: 1.0
-                            )
-                          )
-                        )
-                      ),
-                      TextButton(
-                        child: Icon(
-                          Icons.send
-                        ),
-                        onPressed: () {
-
-                        }
-                      )
-                    ]
+                  messageInputField,
+                  TextButton(
+                    child: Icon(
+                        Icons.send
+                    ),
+                    onPressed: () {
+                      sendMessage();
+                    }
                   )
                 ]
               ),

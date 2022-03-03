@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'db.dart';
+import 'models.dart';
 
 class PaymentPage extends StatefulWidget {
 
@@ -20,9 +21,20 @@ class _TransferPageState extends State<PaymentPage> {
   late DatabaseHandler handler;
   int? amountId = 0;
   int userId = 0;
+  Amount currentAmount = Amount(
+    provider: '',
+    number: '',
+    email: 0,
+    cost: 0,
+    id: 0,
+    status: '',
+    user: 0,
+    datetime: ''
+  );
 
   payAmount(context) {
-    int updatedCost = 0;
+    int paymentCost = int.parse(cost);
+    int updatedCost = currentAmount.cost + paymentCost;
     handler.updateAmountCost(amountId!, updatedCost);
     // Navigator.pushNamed(context, '/area');
     Navigator.pushNamed(
@@ -40,7 +52,16 @@ class _TransferPageState extends State<PaymentPage> {
     handler = DatabaseHandler();
     handler.initializeDB().whenComplete(() async {
       setState(() {
-
+        handler.retrieveAmounts().then((value) {
+          for (Amount amount in value) {
+            int currentAmountId = amount.id!;
+            bool isMyAmount = currentAmountId == amountId;
+            if (isMyAmount) {
+              currentAmount = amount;
+              break;
+            }
+          }
+        });
       });
     });
   }
@@ -71,7 +92,7 @@ class _TransferPageState extends State<PaymentPage> {
                 )
               ),
               Text(
-                '$amountId',
+                currentAmount.number,
                 style: TextStyle(
                   fontSize: 14
                 )
@@ -88,6 +109,7 @@ class _TransferPageState extends State<PaymentPage> {
               'Итого к оплате'
             ),
             TextField(
+              textAlign: TextAlign.center,
               onChanged: (value) {
                 setState(() {
                   cost = value;

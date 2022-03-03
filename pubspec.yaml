@@ -34,6 +34,7 @@ dependencies:
   flutter_map: ^0.14.0
   sqflite:
   sqlite_viewer: ^1.0.5
+  flutter_email_sender: ^5.1.0
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

@@ -124,132 +124,66 @@ class _ProfileSecurityPageState extends State<ProfileSecurityPage> {
         )
       ),
       body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          TextField(
-              onChanged: (value) {
-                setState(() {
-                  login = value;
-                });
-              },
-              decoration: new InputDecoration.collapsed(
-                  hintText: 'E-mail',
-                  border: OutlineInputBorder(
-                      borderSide: BorderSide(
-                          width: 1.0
-                      )
-                  )
-              )
+          Text(
+            'Использование PIN-кода',
+            style: TextStyle(
+              color: Color.fromARGB(255, 0, 0, 175),
+              fontWeight: FontWeight.w500
+            )
           ),
-          TextField(
-              onChanged: (value) {
-                setState(() {
-                  phone = value;
-                });
-              },
-              decoration: new InputDecoration.collapsed(
-                  hintText: 'Мобильный телефон',
-                  border: OutlineInputBorder(
-                      borderSide: BorderSide(
-                          width: 1.0
-                      )
-                  )
-              )
-          ),
-          TextField(
-              onChanged: (value) {
-                setState(() {
-                  password = value;
-                });
-              },
-              decoration: new InputDecoration.collapsed(
-                  hintText: 'Придумайте пароль',
-                  border: OutlineInputBorder(
-                      borderSide: BorderSide(
-                          width: 1.0
-                      )
-                  )
-              ),
-              obscureText: true
-          ),
-          TextField(
-              onChanged: (value) {
-                setState(() {
-                  confirmPassword = value;
-                });
-              },
-              decoration: new InputDecoration.collapsed(
-                  hintText: 'Повторите пароль',
-                  border: OutlineInputBorder(
-                      borderSide: BorderSide(
-                          width: 1.0
-                      )
-                  )
-              ),
-              obscureText: true
-          ),
-          TextField(
-              onChanged: (value) {
-                setState(() {
-                  name = value;
-                });
-              },
-              decoration: new InputDecoration.collapsed(
-                  hintText: 'Имя пользователя',
-                  border: OutlineInputBorder(
-                      borderSide: BorderSide(
-                          width: 1.0
-                      )
-                  )
-              )
+          Divider(
+            thickness: 1.0
           ),
           Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Column(
-                    children: [
-                      Text(
-                          'Даю согласие на получение рвссылок\nрекламно-информационного характера'
-                      ),
-                      Text(
-                          'Без согласия на рекламу Вы упускаете\nнаши выгодные предложения'
-                      )
-                    ]
-                ),
-                Switch(
-                    value: email,
-                    onChanged: (value) {
-                      setState(() {
-                        email = value;
-                      });
-                    }
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Вход по PIN-коду',
+                style: TextStyle(
+                  color: Color.fromARGB(255, 0, 0, 0)
                 )
-              ]
+              ),
+              Switch(
+                value: false,
+                onChanged: (value) {
+
+                }
+              )
+            ]
+          ),
+          Divider(
+              thickness: 1.0
           ),
           Text(
-              'Нажимая кнопку \"Далее\" Вы принимаете\nПользовательское соглашение и даете\nна обработку персональных данных'
+            'При входе в приложение потребуется ввести код\nдля подтверждения доступа',
+            style: TextStyle(
+              color: Color.fromARGB(255, 175, 175, 175),
+              fontWeight: FontWeight.w500
+            )
           ),
-          TextButton(
-              child: Text(
-                  'Далее'
+          Divider(
+            thickness: 1.0
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Изменить код-пароль',
+                style: TextStyle(
+                  color: Color.fromARGB(255, 0, 0, 0)
+                )
               ),
-              onPressed: () {
-                addUser(context);
-              },
-              style: ButtonStyle(
-                  foregroundColor: MaterialStateProperty.all<Color>(
-                      Colors.orange
-                  ),
-                  fixedSize: MaterialStateProperty.all<Size>(
-                      Size(
-                          45.0,
-                          45.0
-                      )
-                  )
+              Icon(
+                Icons.chevron_right
               )
+            ]
+          ),
+          Divider(
+            thickness: 1.0
           )
-        ],
-      ),
+        ]
+      )
     );
   }
 }

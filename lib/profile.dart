@@ -1,6 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import 'db.dart';
+import 'models.dart';
+
 class ProfilePage extends StatefulWidget {
 
   const ProfilePage({Key? key}) : super(key: key);
@@ -13,6 +16,62 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
 
   int userId = 0;
+  late DatabaseHandler handler;
+  User currentUser = User(
+    id: 0,
+    thirdname: '',
+    secondname: '',
+    phone: '',
+    password: '',
+    name: '',
+    login: '',
+    gender: '',
+    firstname: '',
+    born: '',
+    email: 0,
+    address: ''
+  );
+
+  getFullName() {
+    String firstName = currentUser.firstname;
+    String secondName = currentUser.secondname;
+    String thirdName = currentUser.thirdname;
+    String fullName = '${firstName} ${secondName} ${thirdName}';
+    return fullName;
+  }
+
+  getShortName() {
+    String firstName = currentUser.firstname;
+    String secondName = currentUser.secondname;
+    List<String> firstNameLetters = firstName.split('');
+    String firstLetterOfFirstName = firstNameLetters[0];
+    String upperFirstLetterOfFirstName = firstLetterOfFirstName.toUpperCase();
+    List<String> secondNameLetters = secondName.split('');
+    String firstLetterOfSecondName = secondNameLetters[0];
+    String upperFirstLetterOfSecondName = firstLetterOfSecondName.toUpperCase();
+    String shortName = '${upperFirstLetterOfFirstName}${upperFirstLetterOfSecondName}';
+    return shortName;
+  }
+
+  @override
+  initState() {
+    super.initState();
+    handler = DatabaseHandler();
+    handler.initializeDB().whenComplete(() async {
+      setState(() {
+        handler.retrieveUsers().then((value) {
+          for (User user in value) {
+            int currentUserId = user.id!;
+            bool isMyUser = currentUserId == userId;
+            if (isMyUser) {
+              currentUser = user;
+              break;
+            }
+          }
+        });
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +103,7 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
               child: Center(
                 child: Text(
-                  'РД',
+                  getShortName(),
                   style: TextStyle(
                     fontSize: 48,
                     fontWeight: FontWeight.bold,
@@ -54,7 +113,7 @@ class _ProfilePageState extends State<ProfilePage> {
               )
             ),
             Text(
-              'Родион Дьяков'
+              getFullName()
             ),
             GestureDetector(
               child: Row(
@@ -108,7 +167,14 @@ class _ProfilePageState extends State<ProfilePage> {
                 ]
               ),
               onTap: () {
-                Navigator.pushNamed(context, '/profile/password');
+                // Navigator.pushNamed(context, '/profile/password');
+                Navigator.pushNamed(
+                  context,
+                  '/profile/password',
+                  arguments: {
+                    'userId': userId
+                  }
+                );
               }
             ),
             GestureDetector(
