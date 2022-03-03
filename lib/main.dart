@@ -1,13 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:receipts/contacts.dart';
+import 'package:receipts/db.dart';
 import 'package:receipts/payment.dart';
 import 'package:receipts/payments_and_transfers.dart';
 import 'package:receipts/personalarea.dart';
 import 'package:receipts/profile.dart';
+import 'package:receipts/profile_accounts.dart';
+import 'package:receipts/profile_contacts.dart';
+import 'package:receipts/profile_data.dart';
+import 'package:receipts/profile_password.dart';
+import 'package:receipts/profile_security.dart';
+import 'package:receipts/profile_subs.dart';
 import 'package:receipts/promocode.dart';
 import 'package:receipts/register.dart';
 import 'package:receipts/transfer.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import 'add_amount.dart';
+import 'models.dart';
 
 void main() {
   runApp(const MyApp());
@@ -35,6 +45,13 @@ class MyApp extends StatelessWidget {
         '/payments_and_transfers': (context) => PaymentsAndTransfersPage(),
         '/transfer': (context) => TransferPage(),
         '/payment': (context) => PaymentPage(),
+        '/amount/add': (context) => AddAmountPage(),
+        '/profile/subs': (context) => ProfileSubsPage(),
+        '/profile/accounts': (context) => ProfileAccountsPage(),
+        '/profile/data': (context) => ProfileDataPage(),
+        '/profile/password': (context) => ProfilePasswordPage(),
+        '/profile/contacts': (context) => ProfileContactsPage(),
+        '/profile/security': (context) => ProfileSecurityPage(),
       }
     );
   }
@@ -51,6 +68,82 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
 
+  late DatabaseHandler handler;
+  String login = '';
+  String password = '';
+
+  loginUser(context) async {
+    await handler.retrieveUsers().then((value) {
+      bool isUserNotFound = true;
+      int detectedUserId = 0;
+      for (User user in value) {
+        int userId = user.id!;
+        String userLogin = user.login;
+        String userPassword = user.password;
+        print('userLogin: ${userLogin}');
+        print('userPassword: ${userPassword}');
+        print('login: ${login}');
+        print('password: ${password}');
+        bool isLoginsMatches = userLogin == login;
+        bool isPasswordsMatches = userPassword == password;
+        print('isLoginsMatches: ${isLoginsMatches}');
+        print('isPasswordsMatches: ${isPasswordsMatches}');
+        bool isDetectUser = isPasswordsMatches && isLoginsMatches;
+        if (isDetectUser) {
+          isUserNotFound = false;
+          detectedUserId = userId;
+          break;
+        }
+      }
+      if (isUserNotFound) {
+        showDialog<String>(
+          context: context,
+          builder: (BuildContext context) => AlertDialog(
+            title: const Text('Сообщение'),
+            content: Container(
+              child: Column(
+                children: [
+                  Text(
+                    'Неправильно введен логин или пароль'
+                  )
+                ]
+              )
+            ),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  return Navigator.pop(context, 'OK');
+                },
+                child: const Text('ОК')
+              )
+            ]
+          )
+        );
+      } else {
+        Navigator.pushNamed(
+          context,
+          '/area',
+          arguments: {
+            'userId': detectedUserId
+          }
+        );
+        // Navigator.pushNamed(context, '/area');
+      }
+      // Navigator.pushNamed(context, '/area');
+    });
+  }
+
+  @override
+  initState() {
+    super.initState();
+    handler = DatabaseHandler();
+    handler.initializeDB().whenComplete(() async {
+      setState(() {
+
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -65,7 +158,9 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           TextField(
             onChanged: (value) {
-
+              setState(() {
+                login = value;
+              });
             },
             decoration: new InputDecoration.collapsed(
               hintText: 'E-mail',
@@ -77,8 +172,11 @@ class _MyHomePageState extends State<MyHomePage> {
             )
           ),
           TextField(
+            obscureText: true,
             onChanged: (value) {
-
+              setState(() {
+                password = value;
+              });
             },
             decoration: new InputDecoration.collapsed(
               hintText: 'Пароль',
@@ -97,7 +195,7 @@ class _MyHomePageState extends State<MyHomePage> {
               'Войти'
             ),
             onPressed: () {
-              Navigator.pushNamed(context, '/area');
+              loginUser(context);
             },
             style: ButtonStyle(
               backgroundColor: MaterialStateProperty.all<Color>(

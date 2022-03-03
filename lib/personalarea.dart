@@ -1,5 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:sqlite_viewer/sqlite_viewer.dart';
+
+import 'db.dart';
+import 'models.dart';
 
 class PersonalAreaPage extends StatefulWidget {
 
@@ -21,13 +25,93 @@ class _PersonalAreaPageState extends State<PersonalAreaPage> {
     '',
     'Еще'
   ];
+  List<Widget> amounts = [
+
+  ];
+  late DatabaseHandler handler;
+  int userId = 0;
+  Amount currentAmount = Amount(
+    provider: '',
+    status: '',
+    user: 0,
+    number: '',
+    email: 0,
+    cost: 0,
+    datetime: '',
+  );
+
+  addAmount(Amount record, context) {
+    int amountId = record.id!;
+    int amountUserId = record.user;
+    bool isMyAmount = userId == amountUserId;
+    if (isMyAmount) {
+      String amountNumber = record.number;
+      int amountIndex = amounts.length;
+
+      Widget amount = GestureDetector(
+        onTap: () {
+          setState(() {
+            currentAmount = record;
+          });
+        },
+        child: Container(
+          height: 25,
+          margin: EdgeInsets.symmetric(
+            horizontal: 10
+          ),
+          padding: EdgeInsets.symmetric(
+            horizontal: 25,
+            vertical: 3
+          ),
+          decoration: BoxDecoration(
+            color: (
+              amountId == currentAmount.id ?
+                Color.fromARGB(255, 225, 225, 225)
+              :
+                Color.fromARGB(255, 185, 185, 185)
+            ),
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(10.0),
+              topRight: Radius.circular(10.0)
+            )
+          ),
+          child: Text(
+            amountNumber
+          )
+        )
+      );
+      amounts.add(amount);
+      // setState(() {
+      //   currentAmount = record;
+      // });
+    }
+  }
+
+  @override
+  initState() {
+    super.initState();
+    handler = DatabaseHandler();
+    handler.initializeDB().whenComplete(() async {
+      setState(() {
+
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
 
+    setState(() {
+      final arguments = ModalRoute.of(context)!.settings.arguments as Map;
+      if (arguments != null) {
+        print(arguments['userId']);
+        userId = arguments['userId'];
+      }
+    });
+
     return DefaultTabController(
         initialIndex: 0,
-        length: 5,
+        length: 6,
         child: Scaffold(
           appBar:
           (
@@ -80,6 +164,9 @@ class _PersonalAreaPageState extends State<PersonalAreaPage> {
                   ),
                   Tab(
                       text: 'Еще'
+                  ),
+                  Tab(
+                    text: 'Database inspector'
                   )
                 ]
               ),
@@ -92,149 +179,242 @@ class _PersonalAreaPageState extends State<PersonalAreaPage> {
             children: [
               Column(
                 children: <Widget>[
-                  Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  Container(
+                    child:  Row(
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            // Navigator.pushNamed(context, '/amount/add');
+                            Navigator.pushNamed(
+                              context,
+                              '/amount/add',
+                              arguments: {
+                                'userId': userId
+                              }
+                            );
+                          },
+                          child: Container(
+                            height: 25,
+                            margin: EdgeInsets.symmetric(
+                              horizontal: 10
+                            ),
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 25,
+                              vertical: 3
+                            ),
+                            decoration: BoxDecoration(
+                              color: Color.fromARGB(255, 185, 185, 185),
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(10.0),
+                                topRight: Radius.circular(10.0)
+                              )
+                            ),
+                            child: Icon(
+                              Icons.add
+                            )
+                          )
+                        ),
+                        FutureBuilder(
+                          future: handler.retrieveAmounts(),
+                          builder: (BuildContext context, AsyncSnapshot<List<Amount>> snapshot) {
+                            int snapshotsCount = 0;
+                            if (snapshot.data != null) {
+                              snapshotsCount = snapshot.data!.length;
+                              amounts = [];
+                              for (int snapshotIndex = 0; snapshotIndex < snapshotsCount; snapshotIndex++) {
+                                addAmount(snapshot.data!.elementAt(snapshotIndex), context);
+                              }
+                            }
+                            if (snapshot.hasData) {
+                              return Column(
+                                children: [
+                                  Container(
+                                    height: 250,
+                                    child: SingleChildScrollView(
+                                      scrollDirection: Axis.horizontal,
+                                      child: Row(
+                                        children: amounts
+                                      )
+                                    )
+                                  )
+                                ]
+                              );
+                            } else {
+                              return Row(
+
+                              );
+                            }
+                            return Row(
+
+                            );
+                          },
+                        )
+                      ]
+                    ),
+                    margin: EdgeInsets.all(35)
+                  ),
+                  (
+                    amounts.length <= 0 ?
+                      Text(
+                        'Вы не прикрепили еще ни одного счета'
+                      )
+                    :
+                      Column(
                         children: [
-                          Text(
-                            'Адресс проживания'
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'Адресс проживания'
+                              ),
+                              Icon(
+                                Icons.info
+                              )
+                            ]
                           ),
-                          Icon(
-                            Icons.info
+                          Text(
+                            currentAmount.cost < 0 ?
+                              'Сумма к оплате'
+                            :
+                              'Переплата'
+                          ),
+                          Text(
+                            '1000 Р',
+                            style: TextStyle(
+                              fontSize: 36,
+                              color: (
+                                currentAmount.cost >= 0 ?
+                                  Color.fromARGB(255, 0, 150, 0)
+                                :
+                                  Color.fromARGB(255, 255, 0, 0)
+                              )
+                            )
+                          ),
+                          TextButton(
+                            child: Text(
+                              'Еще'
+                            ),
+                            onPressed: () {
+
+                            },
+                            style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all<Color>(
+                                Color.fromARGB(255, 225, 225, 225)
+                              ),
+                              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(18.0)
+                                )
+                              ),
+                              fixedSize: MaterialStateProperty.all<Size>(
+                                Size(
+                                  125.0,
+                                  45.0
+                                )
+                              ),
+                              foregroundColor: MaterialStateProperty.all<Color>(
+                                Color.fromARGB(255, 0, 0, 0)
+                              )
+                            )
+                          ),
+                          TextButton(
+                            style: ButtonStyle(
+                              foregroundColor: MaterialStateProperty.all<Color>(
+                                Colors.white
+                              ),
+                              backgroundColor: MaterialStateProperty.all<Color>(
+                                Colors.orange
+                              ),
+                              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(18.0)
+                                )
+                              ),
+                              fixedSize: MaterialStateProperty.all<Size>(
+                                Size(
+                                  275.0,
+                                  45.0
+                                )
+                              )
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.warning
+                                ),
+                                Text(
+                                  'Важные уведомления'
+                                )
+                              ]
+                            ),
+                            onPressed: () {
+
+                            }
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              GestureDetector(
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      child: Icon(
+                                        Icons.credit_card_rounded,
+                                        size: 48
+                                      ),
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle
+                                      )
+                                    ),
+                                    Text(
+                                      'Оплатить\nбез',
+                                      textAlign: TextAlign.center,
+                                    )
+                                  ]
+                                ),
+                                onTap: () {
+                                  // Navigator.pushNamed(context, '/payment');
+                                  // int currentAmountId = currentAmount.id!;
+                                  Navigator.pushNamed(
+                                    context,
+                                    '/payment',
+                                    arguments: {
+                                      'userId': userId,
+                                      'amountId': currentAmount.id
+                                    }
+                                  );
+                                },
+                              ),
+                              VerticalDivider(
+                                thickness: 1.0,
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.pushNamed(context, '/transfer');
+                                },
+                                child: Column(
+                                  children: [
+                                    Container(
+                                        child: Icon(
+                                          Icons.inbox,
+                                          size: 48
+                                        ),
+                                        decoration: BoxDecoration(
+                                            shape: BoxShape.circle
+                                        )
+                                    ),
+                                    Text(
+                                      'Передать\nпоказания',
+                                      textAlign: TextAlign.center,
+                                    )
+                                  ]
+                                )
+                              )
+                            ],
                           )
                         ]
-                      ),
-                      Text(
-                        'Сумма к оплате'
-                      ),
-                      Text(
-                        '1000 Р',
-                        style: TextStyle(
-                          fontSize: 36,
-                          color: (
-                            true ?
-                              Color.fromARGB(255, 0, 150, 0)
-                            :
-                              Color.fromARGB(255, 255, 0, 0)
-                          )
-                        )
-                      ),
-                      TextButton(
-                        child: Text(
-                          'Еще'
-                        ),
-                        onPressed: () {
-
-                        },
-                        style: ButtonStyle(
-                          backgroundColor: MaterialStateProperty.all<Color>(
-                            Color.fromARGB(255, 225, 225, 225)
-                          ),
-                          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                            RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(18.0)
-                            )
-                          ),
-                          fixedSize: MaterialStateProperty.all<Size>(
-                            Size(
-                              125.0,
-                              45.0
-                            )
-                          ),
-                          foregroundColor: MaterialStateProperty.all<Color>(
-                            Color.fromARGB(255, 0, 0, 0)
-                          )
-                        )
-                      ),
-                      TextButton(
-                        style: ButtonStyle(
-                          foregroundColor: MaterialStateProperty.all<Color>(
-                            Colors.white
-                          ),
-                          backgroundColor: MaterialStateProperty.all<Color>(
-                            Colors.orange
-                          ),
-                          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                            RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(18.0)
-                            )
-                          ),
-                          fixedSize: MaterialStateProperty.all<Size>(
-                            Size(
-                              275.0,
-                              45.0
-                            )
-                          )
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.warning
-                            ),
-                            Text(
-                              'Важные уведомления'
-                            )
-                          ]
-                        ),
-                        onPressed: () {
-
-                        }
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          GestureDetector(
-                            child: Column(
-                              children: [
-                                Container(
-                                  child: Icon(
-                                    Icons.credit_card_rounded,
-                                    size: 48
-                                  ),
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle
-                                  )
-                                ),
-                                Text(
-                                  'Оплатить\nбез',
-                                  textAlign: TextAlign.center,
-                                )
-                              ]
-                            ),
-                            onTap: () {
-                              Navigator.pushNamed(context, '/payment');
-                            },
-                          ),
-                          VerticalDivider(
-                            thickness: 1.0,
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.pushNamed(context, '/transfer');
-                            },
-                            child: Column(
-                              children: [
-                                Container(
-                                    child: Icon(
-                                      Icons.inbox,
-                                      size: 48
-                                    ),
-                                    decoration: BoxDecoration(
-                                        shape: BoxShape.circle
-                                    )
-                                ),
-                                Text(
-                                  'Передать\nпоказания',
-                                  textAlign: TextAlign.center,
-                                )
-                              ]
-                            )
-                          )
-                        ],
                       )
-                    ]
                   )
                 ]
               ),
@@ -367,7 +547,14 @@ class _PersonalAreaPageState extends State<PersonalAreaPage> {
                 children: [
                   GestureDetector(
                     onTap: () {
-                      Navigator.pushNamed(context, '/profile');
+                      // Navigator.pushNamed(context, '/profile');
+                      Navigator.pushNamed(
+                        context,
+                        '/profile',
+                        arguments: {
+                          'userId': userId
+                        }
+                      );
                     },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -450,6 +637,14 @@ class _PersonalAreaPageState extends State<PersonalAreaPage> {
                     )
                   ),
                 ]
+              ),
+              TextButton(
+                child: Text(
+                  'Database Inspector'
+                ),
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => DatabaseList()));
+                }
               )
             ]
           )

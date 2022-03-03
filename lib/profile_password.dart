@@ -5,15 +5,15 @@ import 'package:receipts/personalarea.dart';
 import 'db.dart';
 import 'models.dart';
 
-class RegisterPage extends StatefulWidget {
+class ProfilePasswordPage extends StatefulWidget {
 
-  const RegisterPage({Key? key}) : super(key: key);
+  const ProfilePasswordPage({Key? key}) : super(key: key);
 
   @override
-  State<RegisterPage> createState() => _RegisterPageState();
+  State<ProfilePasswordPage> createState() => _ProfilePasswordPageState();
 }
 
-class _RegisterPageState extends State<RegisterPage> {
+class _ProfilePasswordPageState extends State<ProfilePasswordPage> {
 
   late DatabaseHandler handler;
   String login = '';
@@ -45,11 +45,11 @@ class _RegisterPageState extends State<RegisterPage> {
         int userId = currentUser.id!;
         // Navigator.pushNamed(context, '/area');
         Navigator.pushNamed(
-          context,
-          '/area',
-          arguments: {
-            'userId': userId
-          }
+            context,
+            '/area',
+            arguments: {
+              'userId': userId
+            }
         );
       });
     } else {
@@ -79,27 +79,27 @@ class _RegisterPageState extends State<RegisterPage> {
         msg += 'Поля \"Придумайте пароль\" и \"Повторите пароль\" не совпадают';
       }
       showDialog<String>(
-        context: context,
-        builder: (BuildContext context) => AlertDialog(
-          title: const Text('Сообщение'),
-          content: Container(
-            child: Column(
-              children: [
-                Text(
-                  msg
+          context: context,
+          builder: (BuildContext context) => AlertDialog(
+              title: const Text('Сообщение'),
+              content: Container(
+                  child: Column(
+                      children: [
+                        Text(
+                            msg
+                        )
+                      ]
+                  )
+              ),
+              actions: <Widget>[
+                TextButton(
+                    onPressed: () {
+                      return Navigator.pop(context, 'OK');
+                    },
+                    child: const Text('ОК')
                 )
               ]
-            )
-          ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                return Navigator.pop(context, 'OK');
-              },
-              child: const Text('ОК')
-            )
-          ]
-        )
+          )
       );
     }
   }
@@ -120,7 +120,7 @@ class _RegisterPageState extends State<RegisterPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Регистрация'
+          'Изменить пароль'
         )
       ),
       body: Column(
@@ -230,26 +230,26 @@ class _RegisterPageState extends State<RegisterPage> {
               'Нажимая кнопку \"Далее\" Вы принимаете\nПользовательское соглашение и даете\nна обработку персональных данных'
           ),
           TextButton(
-            child: Text(
-              'Далее'
-            ),
-            onPressed: () {
-              addUser(context);
-            },
-            style: ButtonStyle(
-              foregroundColor: MaterialStateProperty.all<Color>(
-                Colors.orange
+              child: Text(
+                  'Далее'
               ),
-              fixedSize: MaterialStateProperty.all<Size>(
-                Size(
-                  45.0,
-                  45.0
-                )
+              onPressed: () {
+                addUser(context);
+              },
+              style: ButtonStyle(
+                  foregroundColor: MaterialStateProperty.all<Color>(
+                      Colors.orange
+                  ),
+                  fixedSize: MaterialStateProperty.all<Size>(
+                      Size(
+                          45.0,
+                          45.0
+                      )
+                  )
               )
-            )
           )
         ],
-      )
+      ),
     );
   }
 }
