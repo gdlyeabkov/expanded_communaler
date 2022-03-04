@@ -14,7 +14,7 @@ import 'package:receipts/profile_subs.dart';
 import 'package:receipts/promocode.dart';
 import 'package:receipts/register.dart';
 import 'package:receipts/transfer.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher.dart' as UrlLauncher;
 import 'package:flutter_email_sender/flutter_email_sender.dart';
 
 import 'add_amount.dart';
@@ -316,10 +316,109 @@ class _MyHomePageState extends State<MyHomePage> {
               )
             ]
           ),
-          Text(
-            'Официальные сайты',
-            style: TextStyle(
-              color: Color.fromARGB(255, 0, 0, 255)
+          TextButton(
+            child: Text(
+              'Официальные сайты'
+            ),
+            onPressed: () {
+              showModalBottomSheet<String>(
+                context: context,
+                builder: (BuildContext context) => BottomSheet(
+                  onClosing: () {
+
+                  },
+                  builder: (context) {
+                    return Container(
+                      child: Column(
+                        children: [
+                          Text(
+                            'Официальные сайты',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w900
+                            )
+                          ),
+                          Text(
+                            'Нажмите чтобы перейти на сайт'
+                          ),
+                          GestureDetector(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.circle
+                                    ),
+                                    Container(
+                                      margin: EdgeInsets.only(
+                                        left: 25
+                                      ),
+                                      child: Text(
+                                        'АО \"Мосэенргосбыт\"',
+                                        textAlign: TextAlign.left,
+                                        style: TextStyle(
+                                          color: Color.fromARGB(255, 200, 200, 200)
+                                        )
+                                      )
+                                    )
+                                  ]
+                                )
+                              ]
+                            ),
+                            onTap: () async {
+                              final String url = 'https://google.com';
+                              if (await UrlLauncher.canLaunch(url))
+                                UrlLauncher.launch(url);
+                            }
+                          ),
+                          Divider(
+                            thickness: 1.0,
+                          ),
+                          GestureDetector(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.circle
+                                    ),
+                                    Container(
+                                      margin: EdgeInsets.only(
+                                        left: 25
+                                      ),
+                                      child: Text(
+                                        'ООО \"МосОблЕИРЦ\"',
+                                        textAlign: TextAlign.left,
+                                        style: TextStyle(
+                                          color: Color.fromARGB(255, 200, 200, 200)
+                                        )
+                                      )
+                                    )
+                                  ]
+                                )
+                              ]
+                            ),
+                            onTap: () async {
+                              final String url = 'https://google.com';
+                              if (await UrlLauncher.canLaunch(url))
+                                UrlLauncher.launch(url);
+                            }
+                          )
+                        ]
+                      ),
+                      padding: EdgeInsets.all(
+                        15
+                      )
+                    );
+                  }
+                )
+              );
+            },
+            style: ButtonStyle(
+              foregroundColor: MaterialStateProperty.all<Color>(
+                Color.fromARGB(255, 0, 0, 255)
+              )
             )
           )
         ],

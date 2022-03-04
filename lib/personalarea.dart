@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sqlite_viewer/sqlite_viewer.dart';
@@ -137,6 +139,40 @@ class _PersonalAreaPageState extends State<PersonalAreaPage> {
             )
           )
         );
+        int chance = new Random().nextInt(2);
+        bool isPinOffer = chance == 1;
+        if (isPinOffer) {
+          showDialog<String>(
+            context: context,
+            builder: (BuildContext context) => AlertDialog(
+              title: const Text(''),
+              content: Container(
+                child: Column(
+                  children: [
+                    Text(
+                      'Увеличьте безопасность учетной\nзаписи и скорость работы\nс приложением используя\nраспознавние отпечатка пальца\nили PIN-код.'
+                    )
+                  ]
+                )
+              ),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    return Navigator.pop(context, 'Cancel');
+                  },
+                  child: const Text('НЕТ')
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/main');
+                    // return Navigator.pop(context, 'OK');
+                  },
+                  child: const Text('ДА')
+                ),
+              ]
+            )
+          );
+        }
       });
     });
   }

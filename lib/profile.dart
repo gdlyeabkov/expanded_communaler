@@ -233,7 +233,36 @@ class _ProfilePageState extends State<ProfilePage> {
                 'Выйти из аккаунта'
               ),
               onPressed: () {
-                Navigator.pushNamed(context, '/main');
+                showDialog<String>(
+                  context: context,
+                  builder: (BuildContext context) => AlertDialog(
+                    title: const Text('Сообщение'),
+                    content: Container(
+                      child: Column(
+                        children: [
+                          Text(
+                            'Вы хотите выйти из личного\nкабинета?'
+                          )
+                        ]
+                      )
+                    ),
+                    actions: <Widget>[
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/main');
+                          // return Navigator.pop(context, 'OK');
+                        },
+                        child: const Text('ВЫЙТИ')
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          return Navigator.pop(context, 'Cancel');
+                        },
+                        child: const Text('ОТМЕНА')
+                      )
+                    ]
+                  )
+                );
               }
             )
           ]

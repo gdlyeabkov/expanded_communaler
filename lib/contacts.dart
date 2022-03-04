@@ -23,9 +23,107 @@ class _ContactsPageState extends State<ContactsPage> {
   ];
 
   openPhoneDialog() async {
-    final String url = 'tel://84995509550';
-    if (await UrlLauncher.canLaunch(url))
-      UrlLauncher.launch(url);
+
+    showModalBottomSheet<String>(
+      context: context,
+      builder: (BuildContext context) => BottomSheet(
+        onClosing: () {
+
+        },
+        builder: (context) {
+          return Container(
+            child: Column(
+              children: [
+                Text(
+                  'Позвонить в контактный центр',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w900
+                  )
+                ),
+                Text(
+                  'Нажмите чтобы выбрать номер телефона'
+                ),
+                GestureDetector(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'АО Мосэенргосбыт',
+                        textAlign: TextAlign.left,
+                        style: TextStyle(
+                          color: Color.fromARGB(255, 200, 200, 200)
+                        )
+                      ),
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.circle
+                          ),
+                          Container(
+                            margin: EdgeInsets.only(
+                              left: 25
+                            ),
+                            child: Text(
+                              '+7 (499) 550-9-550'
+                            )
+                          )
+                        ]
+                      )
+                    ]
+                  ),
+                  onTap: () async {
+                    final String url = 'tel://84995509550';
+                    if (await UrlLauncher.canLaunch(url))
+                      UrlLauncher.launch(url);
+                  }
+                ),
+                Divider(
+                  thickness: 1.0,
+                ),
+                GestureDetector(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'ООО \"МосОблЕИРЦ\"',
+                        textAlign: TextAlign.left,
+                        style: TextStyle(
+                          color: Color.fromARGB(255, 200, 200, 200)
+                        )
+                      ),
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.circle
+                          ),
+                          Container(
+                            margin: EdgeInsets.only(
+                              left: 25
+                            ),
+                            child: Text(
+                              '+7 (496) 245-15-99'
+                            )
+                          )
+                        ]
+                      )
+                    ]
+                  ),
+                  onTap: () async {
+                    final String url = 'tel://84962451599';
+                    if (await UrlLauncher.canLaunch(url))
+                    UrlLauncher.launch(url);
+                  }
+                )
+              ]
+            ),
+            padding: EdgeInsets.all(
+              15
+            )
+          );
+        }
+      )
+    );
+
   }
 
   @override
