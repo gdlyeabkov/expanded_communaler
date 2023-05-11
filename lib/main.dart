@@ -81,14 +81,8 @@ class _MyHomePageState extends State<MyHomePage> {
         int userId = user.id!;
         String userLogin = user.login;
         String userPassword = user.password;
-        print('userLogin: ${userLogin}');
-        print('userPassword: ${userPassword}');
-        print('login: ${login}');
-        print('password: ${password}');
         bool isLoginsMatches = userLogin == login;
         bool isPasswordsMatches = userPassword == password;
-        print('isLoginsMatches: ${isLoginsMatches}');
-        print('isPasswordsMatches: ${isPasswordsMatches}');
         bool isDetectUser = isPasswordsMatches && isLoginsMatches;
         if (isDetectUser) {
           isUserNotFound = false;
@@ -128,9 +122,7 @@ class _MyHomePageState extends State<MyHomePage> {
             'userId': detectedUserId
           }
         );
-        // Navigator.pushNamed(context, '/area');
       }
-      // Navigator.pushNamed(context, '/area');
     });
   }
 

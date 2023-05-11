@@ -88,9 +88,6 @@ class _PersonalAreaPageState extends State<PersonalAreaPage> {
         )
       );
       amounts.add(amount);
-      // setState(() {
-      //   currentAmount = record;
-      // });
     }
   }
 
@@ -113,7 +110,6 @@ class _PersonalAreaPageState extends State<PersonalAreaPage> {
     );
     setState(() {
       messages.add(msg);
-      // message = '';
     });
   }
 
@@ -165,7 +161,6 @@ class _PersonalAreaPageState extends State<PersonalAreaPage> {
                 TextButton(
                   onPressed: () {
                     Navigator.pushNamed(context, '/main');
-                    // return Navigator.pop(context, 'OK');
                   },
                   child: const Text('ДА')
                 ),
@@ -183,14 +178,13 @@ class _PersonalAreaPageState extends State<PersonalAreaPage> {
     setState(() {
       final arguments = ModalRoute.of(context)!.settings.arguments as Map;
       if (arguments != null) {
-        print(arguments['userId']);
         userId = arguments['userId'];
       }
     });
 
     return DefaultTabController(
         initialIndex: 0,
-        length: 6,
+        length: 5,
         child: Scaffold(
           appBar:
           (
@@ -222,7 +216,6 @@ class _PersonalAreaPageState extends State<PersonalAreaPage> {
             Container(
               child: TabBar(
                 onTap: (index) {
-                  print('currentTabIndex: ${index}');
                   setState(() {
                     currentTab = index;
                     currentTabTitle = currentTabTitles[currentTab];
@@ -243,9 +236,6 @@ class _PersonalAreaPageState extends State<PersonalAreaPage> {
                   ),
                   Tab(
                       text: 'Еще'
-                  ),
-                  Tab(
-                    text: 'Database inspector'
                   )
                 ]
               ),
@@ -265,7 +255,6 @@ class _PersonalAreaPageState extends State<PersonalAreaPage> {
                         children: [
                           GestureDetector(
                             onTap: () {
-                              // Navigator.pushNamed(context, '/amount/add');
                               Navigator.pushNamed(
                                 context,
                                 '/amount/add',
@@ -456,8 +445,6 @@ class _PersonalAreaPageState extends State<PersonalAreaPage> {
                                     ]
                                   ),
                                   onTap: () {
-                                    // Navigator.pushNamed(context, '/payment');
-                                    // int currentAmountId = currentAmount.id!;
                                     Navigator.pushNamed(
                                       context,
                                       '/payment',
@@ -473,7 +460,6 @@ class _PersonalAreaPageState extends State<PersonalAreaPage> {
                                 ),
                                 GestureDetector(
                                   onTap: () {
-                                    // Navigator.pushNamed(context, '/transfer');
                                     Navigator.pushNamed(
                                       context,
                                       '/transfer',
@@ -623,7 +609,6 @@ class _PersonalAreaPageState extends State<PersonalAreaPage> {
                 children: [
                   GestureDetector(
                     onTap: () {
-                      // Navigator.pushNamed(context, '/profile');
                       Navigator.pushNamed(
                         context,
                         '/profile',
@@ -713,14 +698,6 @@ class _PersonalAreaPageState extends State<PersonalAreaPage> {
                     )
                   ),
                 ]
-              ),
-              TextButton(
-                child: Text(
-                  'Database Inspector'
-                ),
-                onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (_) => DatabaseList()));
-                }
               )
             ]
           )

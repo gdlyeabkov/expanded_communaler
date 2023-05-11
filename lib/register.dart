@@ -43,7 +43,6 @@ class _RegisterPageState extends State<RegisterPage> {
       handler.retrieveUsers().then((value) {
         User currentUser = value.last;
         int userId = currentUser.id!;
-        // Navigator.pushNamed(context, '/area');
         Navigator.pushNamed(
           context,
           '/area',

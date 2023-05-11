@@ -36,7 +36,6 @@ class _TransferPageState extends State<PaymentPage> {
     int paymentCost = int.parse(cost);
     int updatedCost = currentAmount.cost + paymentCost;
     handler.updateAmountCost(amountId!, updatedCost);
-    // Navigator.pushNamed(context, '/area');
     Navigator.pushNamed(
       context,
       '/area',
@@ -72,7 +71,6 @@ class _TransferPageState extends State<PaymentPage> {
     setState(() {
       final arguments = ModalRoute.of(context)!.settings.arguments as Map;
       if (arguments != null) {
-        print(arguments['amountId']);
         amountId = arguments['amountId'];
         userId = arguments['userId'];
       }

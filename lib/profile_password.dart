@@ -39,7 +39,6 @@ class _ProfilePasswordPageState extends State<ProfilePasswordPage> {
       handler.retrieveUsers().then((value) {
         User currentUser = value.last;
         int userId = currentUser.id!;
-        // Navigator.pushNamed(context, '/area');
         Navigator.pushNamed(
             context,
             '/area',
@@ -122,7 +121,6 @@ class _ProfilePasswordPageState extends State<ProfilePasswordPage> {
     setState(() {
       final arguments = ModalRoute.of(context)!.settings.arguments as Map;
       if (arguments != null) {
-        print(arguments['userId']);
         userId = arguments['userId'];
       }
     });

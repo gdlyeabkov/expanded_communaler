@@ -128,7 +128,6 @@ class _ProfilePageState extends State<ProfilePage> {
                 ]
               ),
               onTap: () {
-                // Navigator.pushNamed(context, '/profile/data');
                 Navigator.pushNamed(
                   context,
                   '/profile/data',
@@ -167,7 +166,6 @@ class _ProfilePageState extends State<ProfilePage> {
                 ]
               ),
               onTap: () {
-                // Navigator.pushNamed(context, '/profile/password');
                 Navigator.pushNamed(
                   context,
                   '/profile/password',
@@ -250,7 +248,6 @@ class _ProfilePageState extends State<ProfilePage> {
                       TextButton(
                         onPressed: () {
                           Navigator.pushNamed(context, '/main');
-                          // return Navigator.pop(context, 'OK');
                         },
                         child: const Text('ВЫЙТИ')
                       ),

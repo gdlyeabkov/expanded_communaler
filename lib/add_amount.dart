@@ -80,7 +80,6 @@ class _AddAmountPageState extends State<AddAmountPage> {
       String rawDateTime = '${rawDateTimeDay}.${rawDateTimeMonth}.${dateTimeYear}T${rawDateTimeHours}:${rawDateTimeMinutes}';
       int cost = new Random().nextInt(5000);
       handler.addNewAmounts(provider, number, status, rawEmail, rawDateTime, cost, userId);
-      // Navigator.pushNamed(context, '/area');
       Navigator.pushNamed(
         context,
         '/area',
@@ -145,7 +144,6 @@ class _AddAmountPageState extends State<AddAmountPage> {
     setState(() {
       final arguments = ModalRoute.of(context)!.settings.arguments as Map;
       if (arguments != null) {
-        print(arguments['userId']);
         userId = arguments['userId'];
       }
     });
