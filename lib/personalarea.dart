@@ -196,7 +196,7 @@ class _PersonalAreaPageState extends State<PersonalAreaPage> {
                 actions: [
                   (
                     currentTab == 1 ?
-                      FlatButton(
+                      TextButton(
                         onPressed: () {
                           Navigator.pushNamed(context, '/promocode');
                         },

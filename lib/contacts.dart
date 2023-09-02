@@ -138,7 +138,7 @@ class _ContactsPageState extends State<ContactsPage> {
             'Контакты'
           ),
           actions: [
-            FlatButton(
+            TextButton(
               onPressed: () {
                 openPhoneDialog();
               },

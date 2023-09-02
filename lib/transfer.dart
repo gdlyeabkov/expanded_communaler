@@ -84,7 +84,7 @@ class _TransferPageState extends State<TransferPage> {
             ],
           ),
           actions: [
-            FlatButton(
+            TextButton(
               onPressed: () {
               },
               child: Icon(

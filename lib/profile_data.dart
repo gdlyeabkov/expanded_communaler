@@ -184,7 +184,7 @@ class _ProfileDataPageState extends State<ProfileDataPage> {
           'Личные данные'
         ),
         actions: [
-          FlatButton(
+          TextButton(
             child: Text(
               'Сохранить'
             ),
